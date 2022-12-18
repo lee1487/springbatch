@@ -29,24 +29,14 @@ public class JobConfiguration {
 
     private Step step1() {
         return stepBuilderFactory.get("step1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step1 was executed");
-                        return RepeatStatus.FINISHED;
-                    }
-                }).build();
+                .tasklet(new CustomTasklet()).build();
     }
 
     private Step step2() {
         return stepBuilderFactory.get("step2")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step2 was executed");
-//                        throw new RuntimeException("step2 has failed");
-                        return RepeatStatus.FINISHED;
-                    }
+                .tasklet((stepContribution, chunkContext) -> {
+                    System.out.println("step2 was executed");
+                    return RepeatStatus.FINISHED;
                 }).build();
     }
 }
