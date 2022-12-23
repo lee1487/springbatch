@@ -18,6 +18,10 @@ public class JobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
+    private final ExcutionContextTasklet1 excutionContextTasklet1;
+    private final ExcutionContextTasklet2 excutionContextTasklet2;
+    private final ExcutionContextTasklet3 excutionContextTasklet3;
+    private final ExcutionContextTasklet4 excutionContextTasklet4;
 
     @Bean
     public Job job() {
@@ -25,34 +29,25 @@ public class JobConfiguration {
                 .start(step1())
                 .next(step2())
                 .next(step3())
+                .next(step4())
                 .build();
     }
 
     private Step step1() {
         return stepBuilderFactory.get("step1")
-                .tasklet(new Tasklet() {
-                    @Override
-                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        stepContribution.getStepExecution().getJobExecution().getJobInstance().getJobName();
-                        System.out.println("step1 was executed");
-                        return RepeatStatus.FINISHED;
-                    }
-                }).build();
+                .tasklet(excutionContextTasklet1).build();
     }
 
     private Step step2() {
         return stepBuilderFactory.get("step2")
-                .tasklet((stepContribution, chunkContext) -> {
-                    System.out.println("step2 was executed");
-                    return RepeatStatus.FINISHED;
-                }).build();
+                .tasklet(excutionContextTasklet2).build();
     }
-
     private Step step3() {
         return stepBuilderFactory.get("step3")
-                .tasklet((stepContribution, chunkContext) -> {
-                    System.out.println("step3 was executed");
-                    return RepeatStatus.FINISHED;
-                }).build();
+                .tasklet(excutionContextTasklet3).build();
+    }
+    private Step step4() {
+        return stepBuilderFactory.get("step4")
+                .tasklet(excutionContextTasklet4).build();
     }
 }
