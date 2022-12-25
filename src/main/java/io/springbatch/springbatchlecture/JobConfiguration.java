@@ -19,14 +19,12 @@ public class JobConfiguration {
 
     private final JobBuilderFactory jobBuilderFactory;
     private final StepBuilderFactory stepBuilderFactory;
-    private final JobExecutionListener jobExecutionListener;
 
     @Bean
     public Job job() {
-        return jobBuilderFactory.get("batchJob")
+        return jobBuilderFactory.get("Job")
                 .start(step1())
                 .next(step2())
-                .listener(jobExecutionListener)
                 .build();
     }
 
@@ -36,6 +34,7 @@ public class JobConfiguration {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
                         System.out.println("step1 was executed");
+                        Thread.sleep(3000);
                         return RepeatStatus.FINISHED;
                     }
                 }).build();
