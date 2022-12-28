@@ -1,5 +1,9 @@
 package io.springbatch.springbatchlecture.batch.job.api;
 
+import io.springbatch.springbatchlecture.batch.chunk.processor.ApiItemProcessor1;
+import io.springbatch.springbatchlecture.batch.chunk.processor.ApiItemProcessor2;
+import io.springbatch.springbatchlecture.batch.chunk.processor.ApiItemProcessor3;
+import io.springbatch.springbatchlecture.batch.classifier.ProcesssorClassifier;
 import io.springbatch.springbatchlecture.batch.domain.ApiRequestVO;
 import io.springbatch.springbatchlecture.batch.domain.ProductVO;
 import io.springbatch.springbatchlecture.batch.partition.ProductPartitioner;
@@ -102,6 +106,16 @@ public class ApiStepConfiguration {
 
         ProcesssorClassifier<ProductVO, ItemProcessor<?, ? extends ApiRequestVO>> classifier
                 = new ProcesssorClassifier();
+        Map<String, ItemProcessor<ProductVO, ApiRequestVO>> processorMap = new HashMap<>();
+        processorMap.put("1", new ApiItemProcessor1());
+        processorMap.put("2", new ApiItemProcessor2());
+        processorMap.put("3", new ApiItemProcessor3());
+
+        classifier.setProcessorMap(processorMap);
+
+        processor.setClassifier(classifier);
+
+        return processor;
 
     }
 
