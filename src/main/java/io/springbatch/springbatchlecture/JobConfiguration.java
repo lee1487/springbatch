@@ -42,18 +42,31 @@ public class JobConfiguration {
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step1 was executed");
+                        System.out.println("stepContribution = " + stepContribution + ", chunkContext = " + chunkContext);
                         return RepeatStatus.FINISHED;
                     }
-                }).build();
+                })
+                .allowStartIfComplete(true)
+                .build();
     }
 
     @Bean
     public Step step2() {
-        return stepBuilderFactory.get("step1")
-                .tasklet(new CustomTasklet())
+        return stepBuilderFactory.get("step2")
+                .tasklet(new Tasklet() {
+                    @Override
+                    public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
+                        System.out.println("stepContribution = " + stepContribution + ", chunkContext = " + chunkContext);
+
+                        throw new RuntimeException("step2 was failed");
+//                        return RepeatStatus.FINISHED;
+                    }
+                })
+                .startLimit(3)
                 .build();
     }
+
+
 
 
 
