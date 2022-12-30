@@ -31,41 +31,31 @@ public class JobConfiguration {
     public Job batchJob() {
         return jobBuilderFactory.get("batchJob")
                 .incrementer(new RunIdIncrementer())
-                .start(taskStep())
+                .start(step1())
+                .next(step2())
                 .build();
     }
 
     @Bean
-    public Step taskStep() {
-        return stepBuilderFactory.get("taskStep")
+    public Step step1() {
+        return stepBuilderFactory.get("step1")
                 .tasklet(new Tasklet() {
                     @Override
                     public RepeatStatus execute(StepContribution stepContribution, ChunkContext chunkContext) throws Exception {
-                        System.out.println("step was executed");
+                        System.out.println("step1 was executed");
                         return RepeatStatus.FINISHED;
                     }
                 }).build();
     }
 
     @Bean
-    public Step chunkStep() {
-        return stepBuilderFactory.get("chunkStep")
-                .<String, String>chunk(10)
-                .reader(new ListItemReader<>(Arrays.asList("item1", "item2", "item3", "item4", "item5")))
-                .processor(new ItemProcessor<String, String>() {
-                    @Override
-                    public String process(String item) throws Exception {
-                        return item.toUpperCase();
-                    }
-                })
-                .writer(new ItemWriter<String>() {
-                    @Override
-                    public void write(List<? extends String> items) throws Exception {
-                        items.forEach(item -> System.out.println(item));
-                    }
-                })
+    public Step step2() {
+        return stepBuilderFactory.get("step1")
+                .tasklet(new CustomTasklet())
                 .build();
     }
+
+
 
 
 
