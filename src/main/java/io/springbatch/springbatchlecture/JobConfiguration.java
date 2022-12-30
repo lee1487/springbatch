@@ -14,6 +14,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.StepContribution;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.job.DefaultJobParametersValidator;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
@@ -34,30 +35,8 @@ public class JobConfiguration {
                 .start(step1())
                 .next(step2())
                 .next(step3())
-                .incrementer(new RunIdIncrementer())
-                .validator(new JobParametersValidator() {
-
-					@Override
-					public void validate(JobParameters parameters) throws JobParametersInvalidException {
-						// TODO Auto-generated method stub
-
-					}
-				})
-                .preventRestart()
-                .listener(new JobExecutionListener() {
-
-					@Override
-					public void beforeJob(JobExecution jobExecution) {
-						// TODO Auto-generated method stub
-
-					}
-
-					@Override
-					public void afterJob(JobExecution jobExecution) {
-						// TODO Auto-generated method stub
-
-					}
-				})
+//                .validator(new CustomJobParametersValidator())
+                .validator(new DefaultJobParametersValidator(new String[] {"name", "date"}, new String[]{"count"}))
                 .build();
     }
 
@@ -87,13 +66,12 @@ public class JobConfiguration {
     public Step step3() {
         return stepBuilderFactory.get("step3")
                 .tasklet((stepContribution, chunkContext) -> {
-                	chunkContext.getStepContext().getStepExecution().setStatus(BatchStatus.FAILED);
-                	stepContribution.setExitStatus(ExitStatus.STOPPED);
-                	System.out.println("step3 was executed");
-                	return RepeatStatus.FINISHED;
+                    System.out.println("step3 was executed");
+                    return RepeatStatus.FINISHED;
                 })
                 .build();
     }
+
 
 
 }
