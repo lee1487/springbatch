@@ -31,11 +31,30 @@ public class JobConfiguration {
     @Bean
     public Job parentJob() {
         return jobBuilderFactory.get("parentJob")
-                .start(step1())
-                .on("COMPLETED").to(step3())
-                .from(step1()).on("FAILED").to(step2())
+                .start(flowA())
+                .next(step3())
+                .next(flowB())
+                .next(step6())
                 .end()
                 .build();
+    }
+
+    @Bean
+    public Flow flowA() {
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flowA");
+        flowBuilder.start(step1())
+                .next(step2())
+                .end();
+        return flowBuilder.build();
+    }
+
+    @Bean
+    public Flow flowB() {
+        FlowBuilder<Flow> flowBuilder = new FlowBuilder<>("flowB");
+        flowBuilder.start(step4())
+                .next(step5())
+                .end();
+        return flowBuilder.build();
     }
 
     @Bean
@@ -62,6 +81,36 @@ public class JobConfiguration {
         return stepBuilderFactory.get("step3")
                 .tasklet((stepContribution, chunkContext) -> {
                     System.out.println("step3 has executed");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
+
+    @Bean
+    public Step step4() {
+        return stepBuilderFactory.get("step4")
+                .tasklet((stepContribution, chunkContext) -> {
+                    System.out.println("step4 has executed");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
+
+    @Bean
+    public Step step5() {
+        return stepBuilderFactory.get("step5")
+                .tasklet((stepContribution, chunkContext) -> {
+                    System.out.println("step5 has executed");
+                    return RepeatStatus.FINISHED;
+                })
+                .build();
+    }
+
+    @Bean
+    public Step step6() {
+        return stepBuilderFactory.get("step6")
+                .tasklet((stepContribution, chunkContext) -> {
+                    System.out.println("step6 has executed");
                     return RepeatStatus.FINISHED;
                 })
                 .build();
